@@ -70,4 +70,72 @@ let moveLimit = 500;
 
 let moveAlgorithm = {}; 
 
-let ins
+let inspectMoveSelection = false; 
+
+let populationSize = 50;  
+
+let generation = 0; 
+
+let archive = {
+    populationSize: 0, 
+    currentGeneration: 0, 
+    elites: [], 
+    genomes: []
+}
+
+let mutationRate = 0.005; 
+
+let mutationStep = 0.2; 
+
+function initialize(){
+    archive.populationSize = populationSize; 
+
+    //Get the next available shape from the bag 
+    nextShape(); 
+    // applies the shape to the grid 
+    applyShape(); 
+    // set both save state and current state from the game 
+    saveState = getState(); 
+    roundState = getState(); 
+    // Create an initial population of genomes 
+    createInitialPopulation(); 
+
+    let loop = function(){
+        if(changeSpeed){
+            // restart the clock 
+            // stop time 
+            clearInterval(interval); 
+            // set time, like a digital watch 
+            interval = setInterval(loop, speed); 
+            // and don't change it 
+            changeInterval = false; 
+
+            if(speed === 0){
+                // no need to draw on screen elemnts 
+                draw = false; 
+                // updates the game (updates fitness, make a move, evaluate next mode) 
+                update(); 
+                update(); 
+                update(); 
+            } else{
+                // Draw the elements 
+                draw = true;
+            }
+
+            // Update regardless 
+            update(); 
+            if(speed === 0){
+                // now draw elements 
+                draw = true; 
+                // now update the score 
+                updateScore(); 
+            }
+        }; 
+
+        let interval = setInterval(loop, speed);
+    }
+
+    document.onload = initialize(); 
+}
+
+
