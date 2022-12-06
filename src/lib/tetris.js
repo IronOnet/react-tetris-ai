@@ -74,6 +74,10 @@ let inspectMoveSelection = false;
 
 let populationSize = 50;  
 
+let genomes = []; 
+
+let currentGenome = -1;
+
 let generation = 0; 
 
 let archive = {
@@ -139,3 +143,181 @@ function initialize(){
 }
 
 
+// Key options 
+window.onkeydown = function(event){
+    let characterPressed = String.fromCharCode(event.keyCode); 
+    switch(event.keyCode){
+        case 38: 
+            rotateShape();
+            break; 
+        case 40: 
+            moveDown(); 
+            break; 
+        case 37: 
+            moveLeft(); 
+            break; 
+        case 39:
+            moveRight(); 
+            break; 
+
+        case 16: 
+            loadArchive("weights.js");
+            break;  
+        default:
+            console.log("Uknown key pressed")
+    }
+
+    switch(characterPressed.toUpperCase()){
+        case "Q": 
+            saveState = getState(); 
+            break; 
+        case "W": 
+            loadState(saveState); 
+            break 
+        case "D": 
+            speedIndex--; 
+            if(speedIndex < 0){
+                speedIndex = speeds.length - 1;
+            }
+            speed = speeds[speedIndex]; 
+            changeSpeed = true; 
+            break; 
+        case "E": 
+            // speed up 
+            speedIndex++; 
+            if(speedIndex >= speeds.length){
+                speedIndex = 0; 
+            }
+
+            // adjust the speed index 
+            speed = speeds[speedIndex]; 
+            changeSpeed = true; 
+            break; 
+        
+        case "A": 
+            ai = !ai; 
+            break; 
+
+        case "R": 
+            loadArchive(prompt("Insert Weights:")); 
+            break; 
+        case "G": 
+            if(localStorage.getItem("weights") === null){
+                alert("No archive saved. Archives are saved after a generation has passed");
+            } else{
+                prompt("Archive from last generation (including from last session):");
+            }
+            break;
+
+        case "F":
+            inspectMoveSelection = !inspectMoveSelection; 
+            break; 
+        default: 
+            return true;
+    } 
+
+    // Outputs game state to the screen (post key press) 
+    output(); 
+    return false; 
+}; 
+
+/**
+ * Creates the initial population of genomes, each with random genes.
+ */
+
+function createInitialPopulation(){
+    let genomes = []; 
+
+    for(let i = 0; i < populationSize; i++){
+        let genome = {
+            // The unique identifier of the genome
+            id: Math.random(), 
+            // The weight of each row cleared by the given move. the more row 
+            // that are cleared, the more this weight increases 
+            rowsCleared : Math.random() - 0.5, 
+            // The absolute height of the highest column to the power of 1.5 
+            // added so that the algorithm can be able to detect if the blo
+            weightedHeight: Math.random() - 0.5, 
+
+            relativeHeight : Math.random() - 0.5, 
+            holes: Math.random() * 0.5, 
+            roughness : Math.random() - 0.5, 
+        }; 
+
+        genomes.push(genome);
+    }
+
+    evaluateNextGenome(); 
+}
+
+function evaluateNextGenome(){
+    currentGenome++;
+    // If there is none, evolves the population 
+    if(currentGenome == genomes.length){
+        evolve(); 
+    }
+
+    // load current gamestate 
+    loadState(roundState); 
+    movesTaken = À; 
+    makeNextMove(); 
+}
+
+function evolve(){
+    console.log("Generation " + generation + "evaluated."); 
+
+    // reset current genome for new generation 
+    currentGenome = 0; 
+    // increment generation 
+    generation++; 
+    // reset the game 
+    reset(); 
+
+    // gets the current game state 
+    roundState = getState(); 
+    // sorts genomes in decreasing order of fitness values 
+    genomes.sort(function(a, b){
+        return b.fitness - a.fitness;
+    }); 
+
+    archive.elites.push(clone(genomes[0])); 
+    console.log("Elite's fitness: " + genomes[0].fitness); 
+
+    while(genomes.length > populationSize / 2){
+        genomes.push(); 
+    }
+
+    let totalFitness = 0; 
+    for(let i= 0; i < genomes.length; i++){
+        totalFitness += genomes[i].fitness;
+    }
+
+    function getRandomGenome(){
+        return genomes[randomWeightedNumBetween(0, genomes.length - 1)]; 
+    }
+
+    let children = []; 
+
+    children.push(clone(genomes[0])); 
+    // add population sized amount of children 
+    while(children.length < populationSize){
+        children.push(makeChild(getRandomGenome(), getRandomGenome()));
+    }
+
+    // Create new genome array 
+    genomes = []; 
+
+    // to start all the children in 
+    genomes = genomes.concat(children); 
+    // stores this in our archive 
+    archives.genomes = clone(genomes); 
+    // and set current gen 
+    archive.currentGeneration = clone(generation); 
+    console.log(JSON.stringify(archive)); 
+
+    localStorage.setItem("archive", JSON.stringify(archive)); 
+}
+
+/**
+ * Creates a child genome from given parent genomes, and then attemps to 
+ */
