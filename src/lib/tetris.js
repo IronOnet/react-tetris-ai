@@ -352,5 +352,82 @@ function makeChild(mum, dad){
  * @return {Array}
  */
 function getAllPossibleMoves(){
+    let lastState = getState(); 
+    let possibleMoves = [];
+    let possibleMoveRatings = [];
+    let iterations = 0;
+
+    for(let rots = 0; rots < 4; rots++){
+        
+        let oldX = [];
+        for(let t = -5; t <= 5; t++){
+            iterations++; 
+            loadState(lastState);
+            // rotate shape
+            for(let j = 0; j < rots; j++){
+                rotateShape();
+            }
+
+            // move left 
+            if(t < 0){
+                for(let l = 0; l < Math.abs(t); l++){
+                    moveLeft();
+                }
+            }
+            // move right 
+            else if(t > 0){
+                for(let r = 0; r < t; r++){
+                    moveRight();
+                }
+            }
+            // if the shape has moved at all 
+            if(!contains(oldX, currentShape.x)){
+                let moveDownResults = moveDown(); 
+                while(moveDownResults.moved){
+                    moveDownResults = moveDown();
+                }
+                // set the 7 parameters of the genome
+                let algorithm = {
+                    rowsCleared: moveDownResults.rowsCleared, 
+                    weightedHeight: Math.pow(getHeight(), 1.5), 
+                    cumulativeHeight: getCumulativeHeight(), 
+                    relativeHeight: getRelativeHeight(), 
+                    holes: getHoles(), 
+                    roughness: getRoughness()
+                };
+
+                // rate each move 
+                let rating = 0; 
+                rating += algorithm.rowsCleared * genomes[currentGenome].rowsCleared;
+                rating += algorithm.weightedHeight * genomes[currentGenome].weightedHeight; 
+                rating += algorithm.cumulativeHeight * genomes[currentGenome].cumulativeHeight; 
+                rating += algorithm.relativeHeight * genomes[currentGenome].relativeHeight; 
+                rating += algorithm.holes * genomes[currentGenome].holes; 
+                rating += algorithm.roughness * genomes[currentGenome].roughness;
+                // if the move losses the game lower its rating 
+                if(moveDownResults.lose){
+                    rating -= 500;
+                }
+
+                // push all the possible moves and their associated ratings to an array 
+                possibleMoves.push({rotations: rots, translations: t, rating: rating, algorithm: algorithm}); 
+                //update the possible position of oldX value
+                oldX.push(currentShape.x);
+            }
+        }
+    }
+
+    // get last state 
+    loadState(lastState);
+    return possibleMoves;
+}
+
+/**
+ * Returns the highest rated move in the given array of moves 
+ * @param {Array} moves An array of possible moves 
+ * @return {Move} THe highest rated move from the moveset
+ */
+
+function getHighestRatedMove(moves){
     
 }
