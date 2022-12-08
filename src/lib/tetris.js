@@ -321,3 +321,36 @@ function evolve(){
 /**
  * Creates a child genome from given parent genomes, and then attemps to 
  */
+
+function makeChild(mum, dad){
+    let child = {
+        id: Math.random(), 
+        rowsCleared: randomChoice(mum.rowsCleared, dad.rowsCleared), 
+        weightedHeight: randomChoice(mum.weightedHeight, dad.weightedHeight), 
+        cumulativeHeight: randomChoice(mum.cumulativeHeight, dad.cumulativeHeight), 
+        relativeHeight : randomChoice(mum.relativeHeight, dad.relativeHeight),
+        holes: randomChoice(mum.holes, dad.holes), 
+        roughness: randomChoice(mum.roughness, dad.roughness), 
+        fitness: -1
+    }; 
+
+    if(Math.random() < mutationRate){
+        child.rowsCleared = child.rowsCleared + Math.random() * mutationStep * 2 -mutationStep;
+        child.weightedHeight = child.weightedHeight + Math.random() * mutationStep * 2 - mutationStep;
+        child.cumulativeHeight = child.cumulativeHeight + Math.random() * mutationStep * 2 - mutationStep;
+        child.relativeHeight = child.relativeHeight + Math.random() * mutationStep * 2 - mutationStep;
+        child.holes = child.holes + Math.random() * mutationStep * 2 - mutationStep; 
+        child.roughness = child.roughness + Math.random() * mutationStep * 2 - mutationStep;
+    }
+    return child; 
+    
+}
+
+/**
+ * Returns an array of all possible moves that could occur in the current state, rated 
+ * by the parameters of the current genome.
+ * @return {Array}
+ */
+function getAllPossibleMoves(){
+    
+}
