@@ -150,7 +150,7 @@ export  function initialize() {
         //timer interval
         var interval = setInterval(loop, speed);
     }
-    document.onLoad = initialize();
+    //document.onLoad = initialize();
     
     
     //key options
