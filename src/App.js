@@ -1,7 +1,15 @@
 import logo from './logo.svg';
+import { useEffect } from 'react';
 import './App.css';
+import { initialize } from './lib/tetris';
 
 function App() {
+
+  useEffect(() =>{
+    initialize();
+  }, []);
+
+
   return (
     <div>
       <h1>Evolutionary Tetris</h1>

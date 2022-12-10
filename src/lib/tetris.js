@@ -103,7 +103,7 @@ var grid = [
     
     
     //main function, called on load
-    function initialize() {
+export  function initialize() {
         //init pop size
         archive.populationSize = populationSize;
         //get the next available shape from the bag
@@ -1164,4 +1164,7 @@ var grid = [
          }
          return false;
      }
+
+
+
     
