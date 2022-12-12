@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div>
-      <h1>Evolutionary Tetris</h1>
+      <h1 id="title" class="text">Evolutionary Tetris</h1>
       <div id="output" class="text"></div> 
       <div id="score" class="text"></div> 
       <div id="instructions" class="text"><br/><b>[Key Commands]</b><br/>Load Fully Evolved Parameters: [SHIFT]<br/>Inspect Move Selection: [F]<br/>Speed Up: [E]<br/>

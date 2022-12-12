@@ -867,7 +867,7 @@ function output() {
     if (draw) {
         let output = document.getElementById("output");
         let html = "<h1>Tetris AI</h1><h5>A genetic programming approach</h5>";
-        let grid = [];
+        //let grid = [];
         let space = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         for (let i = 0; i < grid.length; i++) {
             if (i === 0) {

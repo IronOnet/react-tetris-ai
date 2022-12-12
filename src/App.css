@@ -4,6 +4,11 @@
   font-size: 20px; 
 }
 
+#title{
+  text-align: center;
+  
+}
+
 #output{
   float: left; 
   padding-left: 20%; 
